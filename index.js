@@ -44,7 +44,9 @@ const createMessage = ({ senderId, receiverId, text, images }) => ({
 });
 
 io.on("connection", (socket) => {
-  console.log(`A user is connected`);
+  if (process.env.NODE_ENV !== 'production') {
+    console.log(`A user is connected`);
+  }
 
   socket.on("addUser", (userId) => {
     addUser(userId, socket.id);
@@ -95,12 +97,15 @@ io.on("connection", (socket) => {
   });
 
   socket.on("disconnect", () => {
-    console.log(`A user disconnected!`);
+    if (process.env.NODE_ENV !== 'production') {
+      console.log(`A user disconnected!`);
+    }
     removeUser(socket.id);
     io.emit("getUsers", users);
   });
 });
 
-server.listen(process.env.PORT || 5000, () => {
-  console.log(`Server is running on port ${process.env.PORT || 5000}`);
+const PORT = process.env.PORT || 5000;
+server.listen(PORT, () => {
+  console.log(`🚀 Socket server is running on port ${PORT}`);
 });
